@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:forestvpn_test/news_screen.dart';
 
 void main() {
   runApp(const ForestVPNTestApp());
@@ -9,13 +10,10 @@ class ForestVPNTestApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'ForestVPN test',
-      home: Scaffold(
-        body: Center(
-          child: Text('News screen'),
-        ),
-      ),
+      debugShowCheckedModeBanner: false,
+      home: NewsScreen(),
     );
   }
 }
