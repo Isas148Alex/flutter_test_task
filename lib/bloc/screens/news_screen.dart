@@ -9,6 +9,7 @@ import 'package:forestvpn_test/repositories/news/models/models.dart';
 import 'package:jiffy/jiffy.dart';
 
 import '../../constant_texts.dart';
+import 'new_screen.dart';
 
 class NewsScreen extends StatelessWidget {
   final repository = MockNewsRepository();
@@ -85,7 +86,8 @@ class NewsScreen extends StatelessWidget {
                   child: ListView.builder(
                       itemCount: state.latestArticles.length,
                       itemBuilder: (context, index) {
-                        return _listViewLatestArticlesBuilder(state, index);
+                        return _listViewLatestArticlesBuilder(
+                            context, state, index);
                       }));
             } else if (state is NewsLoadFailedState) {
               return Text(state.error.toString());
@@ -102,9 +104,10 @@ class NewsScreen extends StatelessWidget {
     return Stack(fit: StackFit.passthrough, children: [
       InkWell(
         onTap: () {
-          context
-              .read<NewsBloc>()
-              .add(OpenNewEvent(state.featuredArticles[index]));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (BuildContext context) {
+            return NewScreen(article: state.featuredArticles[index]);
+          }));
         },
         child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
@@ -127,11 +130,18 @@ class NewsScreen extends StatelessWidget {
     ]);
   }
 
-  Widget _listViewLatestArticlesBuilder(NewsLoadedState state, int index) {
+  Widget _listViewLatestArticlesBuilder(
+      BuildContext context, NewsLoadedState state, int index) {
     return Container(
         padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 10),
         child: Card(
             child: ListTile(
+          onTap: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (BuildContext context) {
+              return NewScreen(article: state.latestArticles[index]);
+            }));
+          },
           title: Text(state.latestArticles[index].title,
               style: const TextStyle(fontSize: 16)),
           subtitle: Text(

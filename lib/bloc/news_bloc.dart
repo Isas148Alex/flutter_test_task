@@ -26,8 +26,6 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
           featuredArticles: featuredArticles, latestArticles: latestArticles));
     });
 
-    // on<ScrollCarousel>(_scrollCarouselEventHandler);
-
     on<OpenNewEvent>((event, emit) {
       emit(OpenNewState(id: event.id));
     });

@@ -10,6 +10,66 @@ class NewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(article.title);
+    return Scaffold(
+      /*appBar: AppBar(
+        backgroundColor: Colors.white,
+        flexibleSpace: Stack(fit: StackFit.passthrough, children: [
+          ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.network(
+                article.imageUrl,
+                fit: BoxFit.cover,
+                color: const Color(0xff000000).withOpacity(0.7),
+                colorBlendMode: BlendMode.darken,
+              )),
+          Positioned(
+            width: 300,
+            child: Text(
+              article.title + article.title,
+              style: const TextStyle(color: Colors.white, fontSize: 28),
+            ),
+            bottom: 10,
+            left: 10,
+          )
+        ]),
+      ),*/
+      body: _buildScaffoldBody(),
+    );
+  }
+
+  Widget _buildScaffoldBody() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Stack(fit: StackFit.passthrough, children: [
+          ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.network(
+                article.imageUrl,
+                fit: BoxFit.cover,
+                color: const Color(0xff000000).withOpacity(0.7),
+                colorBlendMode: BlendMode.darken,
+              )),
+          Positioned(
+            width: 300,
+            child: Text(
+              article.title + article.title,
+              style: const TextStyle(color: Colors.white, fontSize: 28),
+            ),
+            bottom: 10,
+            left: 10,
+          )
+        ]),
+        Container(
+          margin: const EdgeInsets.all(10),
+          child: Text(_reformatDescription(article.description),
+              style: const TextStyle(fontSize: 16)),
+        )
+      ],
+    );
+  }
+
+  String _reformatDescription(String? description) {
+    return description == null ? "" : description.replaceAll("\n", "\n\n");
   }
 }
