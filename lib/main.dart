@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:forestvpn_test/news_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:forestvpn_test/bloc/screens/news_screen.dart';
+
+import 'bloc/news_bloc.dart';
 
 void main() {
   runApp(const ForestVPNTestApp());
@@ -11,9 +14,13 @@ class ForestVPNTestApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'ForestVPN test',
-      debugShowCheckedModeBanner: false,
-      home: NewsScreen(),
-    );
+        title: 'ForestVPN test',
+        debugShowCheckedModeBanner: false,
+        home: BlocProvider(
+          create: (BuildContext context) {
+            return NewsBloc()..add(LoadNewsEvent());
+          },
+          child: NewsScreen(),
+        ));
   }
 }

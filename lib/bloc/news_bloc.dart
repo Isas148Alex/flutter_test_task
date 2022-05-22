@@ -1,22 +1,35 @@
 //TODO
 
-import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:forestvpn_test/repositories/news/repository.dart';
+
+import '../repositories/news/models/models.dart';
 
 part 'news_event.dart';
 part 'news_state.dart';
 
 class NewsBloc extends Bloc<NewsEvent, NewsState> {
-  NewsBloc() : super(NewsInitial()) {
-    on<NewsEvent>((event, emit) {
-      on<NewsEvent>(_newsEventHandler);
-      // TODO: implement event handler
+  final repository = MockNewsRepository();
+
+  NewsBloc() : super(NewsInitialState()) {
+    on<LoadNewsEvent>((event, emit) async {
+      final featuredArticles =
+          await repository.getFeaturedArticles().catchError((error) {
+        emit(NewsLoadFailedState(error: error));
+      });
+      final latestArticles =
+          await repository.getFeaturedArticles().catchError((error) {
+        emit(NewsLoadFailedState(error: error));
+      });
+      emit(NewsLoadedState(
+          featuredArticles: featuredArticles, latestArticles: latestArticles));
     });
 
-  }
-  Future<void> _newsEventHandler(NewsEvent e, Emitter emit) async {
-    emit(NewsInitial);
+    // on<ScrollCarousel>(_scrollCarouselEventHandler);
+
+    on<OpenNewEvent>((event, emit) {
+      emit(OpenNewState(id: event.id));
+    });
   }
 }

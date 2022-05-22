@@ -32,6 +32,7 @@ dependencies:
   flutter_bloc:
   equatable:
   carousel_slider:
+  jiffy:
 
 
   # The following adds the Cupertino Icons font to your application.
