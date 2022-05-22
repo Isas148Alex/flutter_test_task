@@ -26,8 +26,6 @@
 ## Как выполнять?
 1. Вы можете форкнуть этот репозиторий или клонировать к себе его код
 2. В lib/repositories/news есть моковые данные для подключения к экрану, можно использовать их или сделать свои
-3. После выполнения задания отправляйте ссылку на ваш репозиторий в телеграм [frezyx](https://t.me/frezyx) или [suquant](https://t.me/suquant)
 
 ## Ссылки
 1. [Figma](https://www.figma.com/file/Argrws6VDUE8Qvg2DwySIH/Untitled?node-id=0%3A1)
-2. [GitHub](https://github.com/forestvpn/forestvpn_flutter_test)
