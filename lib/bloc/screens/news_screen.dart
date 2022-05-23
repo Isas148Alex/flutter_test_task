@@ -61,8 +61,11 @@ class NewsScreen extends StatelessWidget {
                 } else if (state is NewsLoadedState) {
                   return CarouselSlider.builder(
                       options: CarouselOptions(
-                        //В макете было 300
-                        height: 300,
+                        //В макете было 300 и оно выглядит норм. Но всё таки сделал так
+                        //чтобы влезало больше списка. Можно раскомментить тут
+                        //и чуть нижу в построитель списка передать в 2 раза больше элементов
+                        //на 96 и 99 строках
+                        //height: 300,
                         viewportFraction: 1,
                         //Не было указано, но как по мне - логично
                         enableInfiniteScroll: false,
@@ -90,10 +93,10 @@ class NewsScreen extends StatelessWidget {
             } else if (state is NewsLoadedState) {
               return Expanded(
                   child: ListView.builder(
-                      itemCount: state.latestArticles.length,
+                      itemCount: state.latestArticles.length, //*2   Вот тут
                       itemBuilder: (context, index) {
                         return _listViewLatestArticlesBuilder(
-                            context, state, index);
+                            context, state, index); //%state.latestArticles.length И вот тут
                       }));
             } else if (state is NewsLoadFailedState) {
               return Text(state.error.toString());
@@ -108,14 +111,15 @@ class NewsScreen extends StatelessWidget {
   //Построение карусели
   Widget _carouselSliderFeaturedArticlesBuild(
       BuildContext context, NewsLoadedState state, int index) {
-    return Stack(fit: StackFit.passthrough, children: [
+    return Stack(fit: StackFit.expand, children: [
       InkWell(
         onTap: () {
           //По-хорошему здесь использовать repository.getArticle(),
           //но как по мне - лучше передавать на новый экран новость в актуальном
           //состоянии, а оно есть в нашем списке.
           //А так - можно было бы обернуть это в try-catch и в catch выводить
-          //ScaffoldMessenger с текстом типа "Новость не найдена"
+          //ScaffoldMessenger с текстом типа "Новость не найдена".
+          //А ещё лучше всё это через BLoC делать.
           Navigator.push(context,
               MaterialPageRoute(builder: (BuildContext context) {
             return NewScreen(article: state.featuredArticles[index]);
