@@ -1,4 +1,4 @@
-//TODO
+//События главной страницы
 
 part of 'news_bloc.dart';
 
@@ -6,32 +6,14 @@ abstract class NewsEvent extends Equatable {
   const NewsEvent();
 }
 
+//Загрузка новостей - первое событие
 class LoadNewsEvent extends NewsEvent{
   @override
   // TODO: implement props
   List<Object?> get props => [];
 }
 
-class ScrollCarousel extends NewsEvent{
-  final index;
-
-  const ScrollCarousel(this.index);
-
-  @override
-  // TODO: implement props
-  List<Object?> get props => [index];
-}
-
-class OpenNewEvent extends NewsEvent{
-  final id;
-
-  const OpenNewEvent(this.id);
-
-  @override
-  // TODO: implement props
-  List<Object?> get props => [id];
-}
-
+//Пометка новостей, как прочитанных
 class MarkAllReadEvent extends NewsEvent{
   const MarkAllReadEvent();
 

@@ -1,9 +1,10 @@
-///Used for definition of main screen with all news
+///Главная страница
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:forestvpn_test/bloc/news_bloc.dart';
+import 'package:forestvpn_test/constant_styles.dart';
 import 'package:forestvpn_test/repositories/news/mock_news_repository.dart';
 import 'package:forestvpn_test/repositories/news/models/models.dart';
 import 'package:jiffy/jiffy.dart';
@@ -25,6 +26,8 @@ class NewsScreen extends StatelessWidget {
             style: const TextStyle(color: Colors.black)),
         centerTitle: true,
         actions: [
+          //Можно было выбрать другой тип кнопки, но этот смотрится красиво,
+          //а на макете не было отображена нажатая кнопка
           ActionChip(
             backgroundColor: Colors.white,
             label: Text(ConstantTexts.markAllRead),
@@ -44,13 +47,13 @@ class NewsScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 10),
+            padding: ConstantStyles.containerPadding,
             child: Text(
               ConstantTexts.featured,
-              style: const TextStyle(fontSize: 20),
+              style: ConstantStyles.textSize20,
             )),
         Container(
-            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 10),
+            padding: ConstantStyles.containerPadding,
             child: BlocBuilder<NewsBloc, NewsState>(
               builder: (context, state) {
                 if (state is NewsInitialState) {
@@ -58,8 +61,10 @@ class NewsScreen extends StatelessWidget {
                 } else if (state is NewsLoadedState) {
                   return CarouselSlider.builder(
                       options: CarouselOptions(
+                        //В макете было 300
                         height: 300,
                         viewportFraction: 1,
+                        //Не было указано, но как по мне - логично
                         enableInfiniteScroll: false,
                       ),
                       itemCount: state.featuredArticles.length,
@@ -75,8 +80,9 @@ class NewsScreen extends StatelessWidget {
               },
             )),
         Container(
-            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 10),
-            child: const Text("Latest news", style: TextStyle(fontSize: 20))),
+            padding: ConstantStyles.containerPadding,
+            child: Text(ConstantTexts.latestNews,
+                style: ConstantStyles.textSize20)),
         BlocBuilder<NewsBloc, NewsState>(
           builder: (context, state) {
             if (state is NewsInitialState) {
@@ -99,11 +105,17 @@ class NewsScreen extends StatelessWidget {
     );
   }
 
+  //Построение карусели
   Widget _carouselSliderFeaturedArticlesBuild(
       BuildContext context, NewsLoadedState state, int index) {
     return Stack(fit: StackFit.passthrough, children: [
       InkWell(
         onTap: () {
+          //По-хорошему здесь использовать repository.getArticle(),
+          //но как по мне - лучше передавать на новый экран новость в актуальном
+          //состоянии, а оно есть в нашем списке.
+          //А так - можно было бы обернуть это в try-catch и в catch выводить
+          //ScaffoldMessenger с текстом типа "Новость не найдена"
           Navigator.push(context,
               MaterialPageRoute(builder: (BuildContext context) {
             return NewScreen(article: state.featuredArticles[index]);
@@ -118,22 +130,26 @@ class NewsScreen extends StatelessWidget {
               colorBlendMode: BlendMode.darken,
             )),
       ),
-      Positioned(
-        width: 200,
-        child: Text(
-          state.featuredArticles[index].title,
-          style: const TextStyle(color: Colors.white, fontSize: 28),
-        ),
-        bottom: 10,
-        left: 10,
-      )
+      Container(
+          margin: const EdgeInsets.all(10),
+          child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+            Text(
+              //Сделано исключительно для проверки прочитана или нет статья
+              //для проверки кнопки "mark all read"
+              state.featuredArticles[index].title +
+                  state.featuredArticles[index].readed.toString(),
+              overflow: TextOverflow.clip,
+              style: ConstantStyles.newTitle,
+            )
+          ])),
     ]);
   }
 
+  //Построение списка
   Widget _listViewLatestArticlesBuilder(
       BuildContext context, NewsLoadedState state, int index) {
     return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 10),
+        padding: ConstantStyles.containerPadding,
         child: Card(
             child: ListTile(
           onTap: () {
@@ -143,10 +159,10 @@ class NewsScreen extends StatelessWidget {
             }));
           },
           title: Text(state.latestArticles[index].title,
-              style: const TextStyle(fontSize: 16)),
+              style: ConstantStyles.textSize16),
           subtitle: Text(
               Jiffy(state.latestArticles[index].publicationDate).fromNow(),
-              style: const TextStyle(fontSize: 12)),
+              style: ConstantStyles.textSize12),
           leading: SizedBox(
               width: 90,
               height: 60,

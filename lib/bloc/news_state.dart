@@ -1,4 +1,4 @@
-//TODO
+//Состояния главной страницы (на второй их нет, так как там только чтение)
 
 part of 'news_bloc.dart';
 
@@ -9,8 +9,10 @@ abstract class NewsState extends Equatable {
   List<Object> get props => [];
 }
 
+//Начальное состояние
 class NewsInitialState extends NewsState{}
 
+//Когда новости подгружены
 class NewsLoadedState extends NewsState {
   final List<Article> featuredArticles;
   final List<Article> latestArticles;
@@ -21,6 +23,7 @@ class NewsLoadedState extends NewsState {
   List<Object> get props => [featuredArticles, latestArticles];
 }
 
+//При возникновении ошибки
 class NewsLoadFailedState extends NewsState {
   final Error error;
 
@@ -28,13 +31,4 @@ class NewsLoadFailedState extends NewsState {
 
   @override
   List<Object> get props => [error];
-}
-
-class OpenNewState extends NewsState {
-  final id;
-
-  const OpenNewState({required this.id});
-
-  @override
-  List<Object> get props => [id];
 }

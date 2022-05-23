@@ -1,6 +1,7 @@
-/// Used for definition of a page of concrete new
+/// Виджет одной новости
 
 import 'package:flutter/material.dart';
+import 'package:forestvpn_test/constant_styles.dart';
 import 'package:forestvpn_test/repositories/news/models/article.dart';
 
 class NewScreen extends StatelessWidget {
@@ -11,64 +12,52 @@ class NewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /*appBar: AppBar(
-        backgroundColor: Colors.white,
-        flexibleSpace: Stack(fit: StackFit.passthrough, children: [
-          ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.network(
-                article.imageUrl,
-                fit: BoxFit.cover,
-                color: const Color(0xff000000).withOpacity(0.7),
-                colorBlendMode: BlendMode.darken,
-              )),
-          Positioned(
-            width: 300,
-            child: Text(
-              article.title + article.title,
-              style: const TextStyle(color: Colors.white, fontSize: 28),
-            ),
-            bottom: 10,
-            left: 10,
-          )
-        ]),
-      ),*/
       body: _buildScaffoldBody(),
     );
   }
 
   Widget _buildScaffoldBody() {
     return Column(
+      //Растягиваем картинку на всю ширину
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Stack(fit: StackFit.passthrough, children: [
-          ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.network(
-                article.imageUrl,
-                fit: BoxFit.cover,
-                color: const Color(0xff000000).withOpacity(0.7),
-                colorBlendMode: BlendMode.darken,
-              )),
-          Positioned(
-            width: 300,
-            child: Text(
-              article.title + article.title,
-              style: const TextStyle(color: Colors.white, fontSize: 28),
-            ),
-            bottom: 10,
-            left: 10,
-          )
-        ]),
         Container(
-          margin: const EdgeInsets.all(10),
+            margin: const EdgeInsets.only(bottom: 10),
+            //Заголовок + фоновая картинка, размеры не настроены, поэтому высота везде разная
+            child: Stack(
+                fit: StackFit.passthrough,
+                alignment: Alignment.bottomLeft,
+                children: [
+                  ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.network(
+                        article.imageUrl,
+                        fit: BoxFit.cover,
+                        color: const Color(0xff000000).withOpacity(0.7),
+                        colorBlendMode: BlendMode.darken,
+                      )),
+                  Container(
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 40, horizontal: 48),
+                      child: Text(
+                        article.title,
+                        overflow: TextOverflow.clip,
+                        style: ConstantStyles.newTitle,
+                      ))
+                ])),
+        //На случай длинного текста
+        Expanded(
+            child: SingleChildScrollView(
+                child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 21, vertical: 10),
           child: Text(_reformatDescription(article.description),
-              style: const TextStyle(fontSize: 16)),
-        )
+              style: ConstantStyles.textSize16),
+        )))
       ],
     );
   }
 
+  //делаю переносы строк, а то всё одним абзацем
   String _reformatDescription(String? description) {
     return description == null ? "" : description.replaceAll("\n", "\n\n");
   }
