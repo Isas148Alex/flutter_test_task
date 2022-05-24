@@ -19,7 +19,7 @@ class ForestVPNTestApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: BlocProvider(
         create: (BuildContext context) {
-          return NewsBloc()..add(LoadNewsEvent());
+          return NewsBloc();
         },
         child: NewsScreen(),
       ),

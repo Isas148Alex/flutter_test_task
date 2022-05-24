@@ -6,11 +6,24 @@ abstract class NewsEvent extends Equatable {
   const NewsEvent();
 }
 
-//Загрузка новостей - первое событие
-class LoadNewsEvent extends NewsEvent{
+//Добавление latestArticle
+class FeaturedArticleAddEvent extends NewsEvent{
+  final Article featuredArticle;
+
+  const FeaturedArticleAddEvent({required this.featuredArticle});
+
   @override
-  // TODO: implement props
-  List<Object?> get props => [];
+  List<Object?> get props => [featuredArticle];
+}
+
+//Добавление latestArticle
+class LatestArticleAddEvent extends NewsEvent{
+  final Article latestArticle;
+
+  const LatestArticleAddEvent({required this.latestArticle});
+
+  @override
+  List<Object?> get props => [latestArticle];
 }
 
 //Пометка новостей, как прочитанных
@@ -18,6 +31,5 @@ class MarkAllReadEvent extends NewsEvent{
   const MarkAllReadEvent();
 
   @override
-  // TODO: implement props
   List<Object?> get props => [];
 }

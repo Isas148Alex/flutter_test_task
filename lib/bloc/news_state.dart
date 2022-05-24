@@ -12,15 +12,35 @@ abstract class NewsState extends Equatable {
 //Начальное состояние
 class NewsInitialState extends NewsState{}
 
-//Когда новости подгружены
-class NewsLoadedState extends NewsState {
+//Добавление featuredArticle
+class AllReadState extends NewsState {
   final List<Article> featuredArticles;
   final List<Article> latestArticles;
 
-  const NewsLoadedState({required this.featuredArticles, required this.latestArticles});
+  const AllReadState({required this.featuredArticles, required this.latestArticles});
 
   @override
   List<Object> get props => [featuredArticles, latestArticles];
+}
+
+//Добавление featuredArticle
+class FeaturedArticleAddState extends NewsState {
+  final Article featuredArticle;
+
+  const FeaturedArticleAddState({required this.featuredArticle});
+
+  @override
+  List<Object> get props => [featuredArticle];
+}
+
+//Добавление latestArticle
+class LatestArticleAddState extends NewsState {
+  final Article latestArticle;
+
+  const LatestArticleAddState({required this.latestArticle});
+
+  @override
+  List<Object> get props => [latestArticle];
 }
 
 //При возникновении ошибки
@@ -32,3 +52,4 @@ class NewsLoadFailedState extends NewsState {
   @override
   List<Object> get props => [error];
 }
+

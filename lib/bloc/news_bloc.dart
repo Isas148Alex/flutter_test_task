@@ -12,10 +12,16 @@ part 'news_state.dart';
 
 class NewsBloc extends Bloc<NewsEvent, NewsState> {
   final repository = MockNewsRepository();
+  final List<Article> featuredArticles = [];
+  final List<Article> latestArticles = [];
 
   NewsBloc() : super(NewsInitialState()) {
-    on<LoadNewsEvent>((event, emit) async {
-      await _loadNewsEventHandler(event, emit);
+    on<FeaturedArticleAddEvent>((event, emit) {
+      _featuredArticleAddEventHandler(event, emit);
+    });
+
+    on<LatestArticleAddEvent>((event, emit) {
+      _latestArticleAddEventHandler(event, emit);
     });
 
     on<MarkAllReadEvent>((event, emit) {
@@ -23,42 +29,40 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     });
   }
 
-  Future<void> _loadNewsEventHandler(LoadNewsEvent event, Emitter emit) async {
-    final featuredArticles =
-        await repository.getFeaturedArticles().catchError((error) {
-      emit(NewsLoadFailedState(error: error));
-    });
-    final latestArticles =
-        await repository.getFeaturedArticles().catchError((error) {
-      emit(NewsLoadFailedState(error: error));
-    });
-    emit(NewsLoadedState(
-        featuredArticles: featuredArticles, latestArticles: latestArticles));
-  }
-
-  void _markAllReadEventHandler(MarkAllReadEvent event, Emitter emit){
-    List<Article> featuredArticles = [];
-    List<Article> latestArticles = [];
-    for (var art in (state as NewsLoadedState).featuredArticles) {
-      featuredArticles.add(Article(
-          id: art.id,
-          title: art.title,
-          publicationDate: art.publicationDate,
-          imageUrl: art.imageUrl,
-          readed: true,
-          description: art.description));
+  void _markAllReadEventHandler(MarkAllReadEvent event, Emitter emit) {
+    //По факту - это очень и очень плохо, потому что если объектов будет много,
+    //пересоздание списков займёт уйму времени, но т.к. поле "readed" объявлено как
+    //final, вариант есть такой.
+    for (var i in latestArticles) {
+      i = Article(
+          id: i.id,
+          title: i.title,
+          publicationDate: i.publicationDate,
+          imageUrl: i.imageUrl,
+          description: i.description,
+          readed: true);
     }
-    for (var art in (state as NewsLoadedState).latestArticles) {
-      latestArticles.add(Article(
-          id: art.id,
-          title: art.title,
-          publicationDate: art.publicationDate,
-          imageUrl: art.imageUrl,
-          readed: true,
-          description: art.description));
+    for (var i in featuredArticles) {
+      i = Article(
+          id: i.id,
+          title: i.title,
+          publicationDate: i.publicationDate,
+          imageUrl: i.imageUrl,
+          description: i.description,
+          readed: true);
     }
-    emit(NewsLoadedState(
+    emit(AllReadState(
         latestArticles: latestArticles,
         featuredArticles: featuredArticles));
+  }
+
+  void _featuredArticleAddEventHandler(
+      FeaturedArticleAddEvent event, Emitter emit) {
+    emit(FeaturedArticleAddState(featuredArticle: event.featuredArticle));
+  }
+
+  void _latestArticleAddEventHandler(
+      LatestArticleAddEvent event, Emitter emit) {
+    emit(LatestArticleAddState(latestArticle: event.latestArticle));
   }
 }

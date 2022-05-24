@@ -14,7 +14,6 @@ import 'new_screen.dart';
 
 class NewsScreen extends StatelessWidget {
   final repository = MockNewsRepository();
-  final List<Article> articles = [];
 
   NewsScreen({Key? key}) : super(key: key);
 
@@ -53,64 +52,67 @@ class NewsScreen extends StatelessWidget {
               style: ConstantStyles.textSize20,
             )),
         Container(
-            padding: ConstantStyles.containerPadding,
-            child: BlocBuilder<NewsBloc, NewsState>(
-              builder: (context, state) {
-                if (state is NewsInitialState) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is NewsLoadedState) {
-                  return CarouselSlider.builder(
-                      options: CarouselOptions(
-                        //В макете было 300 и оно выглядит норм. Но всё таки сделал так
-                        //чтобы влезало больше списка. Можно раскомментить тут
-                        //и чуть нижу в построитель списка передать в 2 раза больше элементов
-                        //на 96 и 99 строках
-                        //height: 300,
-                        viewportFraction: 1,
-                        //Не было указано, но как по мне - логично
-                        enableInfiniteScroll: false,
-                      ),
-                      itemCount: state.featuredArticles.length,
-                      itemBuilder:
-                          (BuildContext context, int index, int realIndex) {
-                        return _carouselSliderFeaturedArticlesBuild(
-                            context, state, index);
-                      });
-                } else if (state is NewsLoadFailedState) {
-                  return Text(state.error.toString());
+          padding: ConstantStyles.containerPadding,
+          child: FutureBuilder(
+              future: repository.getFeaturedArticles(),
+              builder: (context, AsyncSnapshot<List<Article>> snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.done:
+                    return CarouselSlider.builder(
+                        options: CarouselOptions(
+                          //В макете было 300 и оно выглядит норм. Но всё таки сделал так
+                          //чтобы влезало больше списка. Можно раскомментить и будет как на макете
+                          //height: 300,
+                          viewportFraction: 1,
+                          //Не было указано, но как по мне - логично
+                          enableInfiniteScroll: false,
+                        ),
+                        itemCount: snapshot.data?.length,
+                        itemBuilder:
+                            (BuildContext context, int index, int realIndex) {
+                          return _carouselSliderFeaturedArticlesBuild(
+                              context, index, snapshot);
+                        });
+                  default:
                 }
                 return Text(ConstantTexts.somethingWrong);
-              },
-            )),
+              }),
+        ),
         Container(
             padding: ConstantStyles.containerPadding,
             child: Text(ConstantTexts.latestNews,
                 style: ConstantStyles.textSize20)),
-        BlocBuilder<NewsBloc, NewsState>(
+        /*BlocBuilder<NewsBloc, NewsState>(
           builder: (context, state) {
-            if (state is NewsInitialState) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (state is NewsLoadedState) {
-              return Expanded(
-                  child: ListView.builder(
-                      itemCount: state.latestArticles.length, //*2   Вот тут
-                      itemBuilder: (context, index) {
-                        return _listViewLatestArticlesBuilder(
-                            context, state, index); //%state.latestArticles.length И вот тут
-                      }));
-            } else if (state is NewsLoadFailedState) {
-              return Text(state.error.toString());
+          if(state is )
+          }),*/
+        FutureBuilder(
+          future: repository.getLatestArticles(),
+          builder: (context, AsyncSnapshot<List<Article>> snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.done:
+                return Expanded(
+                    child: ListView.builder(
+                        itemCount: snapshot.data?.length,
+                        itemBuilder: (context, index) {
+                          return _listViewLatestArticlesBuilder(
+                              context, index, snapshot);
+                        }));
+              default:
             }
-            return const Text("Something went wrong");
+            return Text(ConstantTexts.somethingWrong);
           },
-        ),
+        )
       ],
     );
   }
 
-  //Построение карусели
+//Построение карусели
   Widget _carouselSliderFeaturedArticlesBuild(
-      BuildContext context, NewsLoadedState state, int index) {
+      BuildContext context, int index, AsyncSnapshot<List<Article>> snapshot) {
+    context
+        .read<NewsBloc>()
+        .add(FeaturedArticleAddEvent(featuredArticle: snapshot.data![index]));
     return Stack(fit: StackFit.expand, children: [
       InkWell(
         onTap: () {
@@ -122,13 +124,13 @@ class NewsScreen extends StatelessWidget {
           //А ещё лучше всё это через BLoC делать.
           Navigator.push(context,
               MaterialPageRoute(builder: (BuildContext context) {
-            return NewScreen(article: state.featuredArticles[index]);
+            return NewScreen(article: snapshot.data![index]);
           }));
         },
         child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: Image.network(
-              state.featuredArticles[index].imageUrl,
+              snapshot.data![index].imageUrl,
               fit: BoxFit.cover,
               color: const Color(0xff000000).withOpacity(0.7),
               colorBlendMode: BlendMode.darken,
@@ -140,8 +142,8 @@ class NewsScreen extends StatelessWidget {
             Text(
               //Сделано исключительно для проверки прочитана или нет статья
               //для проверки кнопки "mark all read"
-              state.featuredArticles[index].title +
-                  state.featuredArticles[index].readed.toString(),
+              snapshot.data![index].title +
+                  snapshot.data![index].readed.toString(),
               overflow: TextOverflow.clip,
               style: ConstantStyles.newTitle,
             )
@@ -149,9 +151,12 @@ class NewsScreen extends StatelessWidget {
     ]);
   }
 
-  //Построение списка
+//Построение списка
   Widget _listViewLatestArticlesBuilder(
-      BuildContext context, NewsLoadedState state, int index) {
+      BuildContext context, int index, AsyncSnapshot<List<Article>> snapshot) {
+    context
+        .read<NewsBloc>()
+        .add(LatestArticleAddEvent(latestArticle: snapshot.data![index]));
     return Container(
         padding: ConstantStyles.containerPadding,
         child: Card(
@@ -159,13 +164,12 @@ class NewsScreen extends StatelessWidget {
           onTap: () {
             Navigator.push(context,
                 MaterialPageRoute(builder: (BuildContext context) {
-              return NewScreen(article: state.latestArticles[index]);
+              return NewScreen(article: snapshot.data![index]);
             }));
           },
-          title: Text(state.latestArticles[index].title,
+          title: Text(snapshot.data![index].title,
               style: ConstantStyles.textSize16),
-          subtitle: Text(
-              Jiffy(state.latestArticles[index].publicationDate).fromNow(),
+          subtitle: Text(Jiffy(snapshot.data![index].publicationDate).fromNow(),
               style: ConstantStyles.textSize12),
           leading: SizedBox(
               width: 90,
@@ -173,7 +177,7 @@ class NewsScreen extends StatelessWidget {
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Image.network(
-                    state.latestArticles[index].imageUrl,
+                    snapshot.data![index].imageUrl,
                     fit: BoxFit.cover,
                   ))),
         )));
