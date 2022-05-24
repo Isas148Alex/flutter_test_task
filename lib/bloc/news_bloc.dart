@@ -39,8 +39,8 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
           title: i.title,
           publicationDate: i.publicationDate,
           imageUrl: i.imageUrl,
-          description: i.description,
-          readed: true);
+          readed: true,
+          description: i.description);
     }
     for (var i in featuredArticles) {
       i = Article(
@@ -48,8 +48,8 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
           title: i.title,
           publicationDate: i.publicationDate,
           imageUrl: i.imageUrl,
-          description: i.description,
-          readed: true);
+          readed: true,
+          description: i.description);
     }
     emit(AllReadState(
         latestArticles: latestArticles,

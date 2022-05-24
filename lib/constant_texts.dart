@@ -7,4 +7,5 @@ class ConstantTexts{
   static String latestNews = "Latest news";
   static String notifications = "Notifications";
   static String markAllRead = "Mark all read";
+  static String cannotReadArticle = "Can't read the article";
 }

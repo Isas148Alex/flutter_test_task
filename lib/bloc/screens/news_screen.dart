@@ -74,18 +74,14 @@ class NewsScreen extends StatelessWidget {
                               context, index, snapshot);
                         });
                   default:
+                    return const CircularProgressIndicator();
                 }
-                return Text(ConstantTexts.somethingWrong);
               }),
         ),
         Container(
             padding: ConstantStyles.containerPadding,
             child: Text(ConstantTexts.latestNews,
                 style: ConstantStyles.textSize20)),
-        /*BlocBuilder<NewsBloc, NewsState>(
-          builder: (context, state) {
-          if(state is )
-          }),*/
         FutureBuilder(
           future: repository.getLatestArticles(),
           builder: (context, AsyncSnapshot<List<Article>> snapshot) {
@@ -116,16 +112,17 @@ class NewsScreen extends StatelessWidget {
     return Stack(fit: StackFit.expand, children: [
       InkWell(
         onTap: () {
-          //По-хорошему здесь использовать repository.getArticle(),
-          //но как по мне - лучше передавать на новый экран новость в актуальном
-          //состоянии, а оно есть в нашем списке.
-          //А так - можно было бы обернуть это в try-catch и в catch выводить
-          //ScaffoldMessenger с текстом типа "Новость не найдена".
-          //А ещё лучше всё это через BLoC делать.
-          Navigator.push(context,
-              MaterialPageRoute(builder: (BuildContext context) {
-            return NewScreen(article: snapshot.data![index]);
-          }));
+          repository.getArticle(snapshot.data![index].id).then((value) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (BuildContext context) {
+              return NewScreen(article: snapshot.data![index]);
+            }));
+          }).onError((error, stackTrace) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(ConstantTexts.cannotReadArticle),
+              duration: const Duration(seconds: 1),
+            ));
+          });
         },
         child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
@@ -140,10 +137,7 @@ class NewsScreen extends StatelessWidget {
           margin: const EdgeInsets.all(10),
           child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
             Text(
-              //Сделано исключительно для проверки прочитана или нет статья
-              //для проверки кнопки "mark all read"
-              snapshot.data![index].title +
-                  snapshot.data![index].readed.toString(),
+              snapshot.data![index].title,
               overflow: TextOverflow.clip,
               style: ConstantStyles.newTitle,
             )

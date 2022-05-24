@@ -52,4 +52,3 @@ class NewsLoadFailedState extends NewsState {
   @override
   List<Object> get props => [error];
 }
-
