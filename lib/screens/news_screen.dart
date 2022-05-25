@@ -51,33 +51,30 @@ class NewsScreen extends StatelessWidget {
               ConstantTexts.featured,
               style: ConstantStyles.textSize20,
             )),
-        Container(
-          padding: ConstantStyles.containerPadding,
-          child: FutureBuilder(
-              future: repository.getFeaturedArticles(),
-              builder: (context, AsyncSnapshot<List<Article>> snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.done:
-                    return CarouselSlider.builder(
-                        options: CarouselOptions(
-                          //В макете было 300 и оно выглядит норм. Но всё таки сделал так
-                          //чтобы влезало больше списка. Можно раскомментить и будет как на макете
-                          //height: 300,
-                          viewportFraction: 1,
-                          //Не было указано, но как по мне - логично
-                          enableInfiniteScroll: false,
-                        ),
-                        itemCount: snapshot.data?.length,
-                        itemBuilder:
-                            (BuildContext context, int index, int realIndex) {
-                          return _carouselSliderFeaturedArticlesBuild(
-                              context, index, snapshot);
-                        });
-                  default:
-                    return const CircularProgressIndicator();
-                }
-              }),
-        ),
+        FutureBuilder(
+            future: repository.getFeaturedArticles(),
+            builder: (context, AsyncSnapshot<List<Article>> snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.done:
+                  return CarouselSlider.builder(
+                      options: CarouselOptions(
+                        //В макете было 300 и оно выглядит норм. Но всё таки сделал так
+                        //чтобы влезало больше списка. Можно раскомментить и будет как на макете
+                        //height: 300,
+                        viewportFraction: 1,
+                        //Не было указано, но как по мне - логично
+                        enableInfiniteScroll: false,
+                      ),
+                      itemCount: snapshot.data?.length,
+                      itemBuilder:
+                          (BuildContext context, int index, int realIndex) {
+                        return _carouselSliderFeaturedArticlesBuild(
+                            context, index, snapshot);
+                      });
+                default:
+                  return const CircularProgressIndicator();
+              }
+            }),
         Container(
             padding: ConstantStyles.containerPadding,
             child: Text(ConstantTexts.latestNews,
@@ -109,40 +106,43 @@ class NewsScreen extends StatelessWidget {
     context
         .read<NewsBloc>()
         .add(FeaturedArticleAddEvent(featuredArticle: snapshot.data![index]));
-    return Stack(fit: StackFit.expand, children: [
-      InkWell(
-        onTap: () {
-          repository.getArticle(snapshot.data![index].id).then((value) {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (BuildContext context) {
-              return NewScreen(article: snapshot.data![index]);
-            }));
-          }).onError((error, stackTrace) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(ConstantTexts.cannotReadArticle),
-              duration: ConstantOther.snackBarDuration,
-            ));
-          });
-        },
-        child: ClipRRect(
-            borderRadius: ConstantOther.borderRadius,
-            child: Image.network(
-              snapshot.data![index].imageUrl,
-              fit: BoxFit.cover,
-              color: ConstantOther.blur,
-              colorBlendMode: BlendMode.darken,
-            )),
-      ),
-      Container(
-          margin: const EdgeInsets.all(10),
-          child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-            Text(
-              snapshot.data![index].title,
-              overflow: TextOverflow.clip,
-              style: ConstantStyles.newTitle,
-            )
-          ])),
-    ]);
+    return Container(
+        padding: ConstantStyles.containerPadding,
+        child: Stack(fit: StackFit.expand, children: [
+          InkWell(
+            onTap: () {
+              repository.getArticle(snapshot.data![index].id).then((value) {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (BuildContext context) {
+                  return NewScreen(article: snapshot.data![index]);
+                }));
+              }).onError((error, stackTrace) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(ConstantTexts.cannotReadArticle),
+                  duration: ConstantOther.snackBarDuration,
+                ));
+              });
+            },
+            child: ClipRRect(
+                borderRadius: ConstantOther.borderRadius,
+                child: Image.network(
+                  snapshot.data![index].imageUrl,
+                  fit: BoxFit.cover,
+                  color: ConstantOther.blur,
+                  colorBlendMode: BlendMode.darken,
+                )),
+          ),
+          Container(
+              margin: const EdgeInsets.all(10),
+              child:
+                  Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+                Text(
+                  snapshot.data![index].title,
+                  overflow: TextOverflow.clip,
+                  style: ConstantStyles.newTitle,
+                )
+              ])),
+        ]));
   }
 
   //Построение списка
