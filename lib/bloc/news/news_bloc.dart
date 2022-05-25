@@ -1,10 +1,8 @@
-//Логика главной страницы
+///Логика главной страницы
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:forestvpn_test/repositories/news/repository.dart';
-
-import '../repositories/news/models/models.dart';
 
 part 'news_event.dart';
 
@@ -52,8 +50,7 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
           description: i.description);
     }
     emit(AllReadState(
-        latestArticles: latestArticles,
-        featuredArticles: featuredArticles));
+        latestArticles: latestArticles, featuredArticles: featuredArticles));
   }
 
   void _featuredArticleAddEventHandler(

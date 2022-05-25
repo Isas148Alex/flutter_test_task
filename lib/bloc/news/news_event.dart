@@ -1,4 +1,4 @@
-//События главной страницы
+///События главной страницы
 
 part of 'news_bloc.dart';
 
@@ -6,8 +6,8 @@ abstract class NewsEvent extends Equatable {
   const NewsEvent();
 }
 
-//Добавление latestArticle
-class FeaturedArticleAddEvent extends NewsEvent{
+//Добавление featuredArticle
+class FeaturedArticleAddEvent extends NewsEvent {
   final Article featuredArticle;
 
   const FeaturedArticleAddEvent({required this.featuredArticle});
@@ -17,7 +17,7 @@ class FeaturedArticleAddEvent extends NewsEvent{
 }
 
 //Добавление latestArticle
-class LatestArticleAddEvent extends NewsEvent{
+class LatestArticleAddEvent extends NewsEvent {
   final Article latestArticle;
 
   const LatestArticleAddEvent({required this.latestArticle});
@@ -27,7 +27,7 @@ class LatestArticleAddEvent extends NewsEvent{
 }
 
 //Пометка новостей, как прочитанных
-class MarkAllReadEvent extends NewsEvent{
+class MarkAllReadEvent extends NewsEvent {
   const MarkAllReadEvent();
 
   @override

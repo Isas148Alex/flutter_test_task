@@ -1,4 +1,4 @@
-//Состояния главной страницы (на второй их нет, так как там только чтение)
+///Состояния главной страницы (на второй их нет, так как там только чтение)
 
 part of 'news_bloc.dart';
 
@@ -10,14 +10,15 @@ abstract class NewsState extends Equatable {
 }
 
 //Начальное состояние
-class NewsInitialState extends NewsState{}
+class NewsInitialState extends NewsState {}
 
-//Добавление featuredArticle
+//Пометка новостей прочитанными
 class AllReadState extends NewsState {
   final List<Article> featuredArticles;
   final List<Article> latestArticles;
 
-  const AllReadState({required this.featuredArticles, required this.latestArticles});
+  const AllReadState(
+      {required this.featuredArticles, required this.latestArticles});
 
   @override
   List<Object> get props => [featuredArticles, latestArticles];

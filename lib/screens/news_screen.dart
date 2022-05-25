@@ -3,13 +3,13 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:forestvpn_test/bloc/news_bloc.dart';
-import 'package:forestvpn_test/constant_styles.dart';
+import 'package:forestvpn_test/bloc/news/news_bloc.dart';
+import 'package:forestvpn_test/constants/constant_styles.dart';
 import 'package:forestvpn_test/repositories/news/mock_news_repository.dart';
 import 'package:forestvpn_test/repositories/news/models/models.dart';
 import 'package:jiffy/jiffy.dart';
-
-import '../../constant_texts.dart';
+import '../constants/constant_other.dart';
+import '../constants/constant_texts.dart';
 import 'new_screen.dart';
 
 class NewsScreen extends StatelessWidget {
@@ -103,7 +103,7 @@ class NewsScreen extends StatelessWidget {
     );
   }
 
-//Построение карусели
+  //Построение карусели
   Widget _carouselSliderFeaturedArticlesBuild(
       BuildContext context, int index, AsyncSnapshot<List<Article>> snapshot) {
     context
@@ -120,16 +120,16 @@ class NewsScreen extends StatelessWidget {
           }).onError((error, stackTrace) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text(ConstantTexts.cannotReadArticle),
-              duration: const Duration(seconds: 1),
+              duration: ConstantOther.snackBarDuration,
             ));
           });
         },
         child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: ConstantOther.borderRadius,
             child: Image.network(
               snapshot.data![index].imageUrl,
               fit: BoxFit.cover,
-              color: const Color(0xff000000).withOpacity(0.7),
+              color: ConstantOther.blur,
               colorBlendMode: BlendMode.darken,
             )),
       ),
@@ -145,7 +145,7 @@ class NewsScreen extends StatelessWidget {
     ]);
   }
 
-//Построение списка
+  //Построение списка
   Widget _listViewLatestArticlesBuilder(
       BuildContext context, int index, AsyncSnapshot<List<Article>> snapshot) {
     context
@@ -156,10 +156,17 @@ class NewsScreen extends StatelessWidget {
         child: Card(
             child: ListTile(
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (BuildContext context) {
-              return NewScreen(article: snapshot.data![index]);
-            }));
+            repository.getArticle(snapshot.data![index].id).then((value) {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (BuildContext context) {
+                return NewScreen(article: snapshot.data![index]);
+              }));
+            }).onError((error, stackTrace) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(ConstantTexts.cannotReadArticle),
+                duration: ConstantOther.snackBarDuration,
+              ));
+            });
           },
           title: Text(snapshot.data![index].title,
               style: ConstantStyles.textSize16),
@@ -169,7 +176,7 @@ class NewsScreen extends StatelessWidget {
               width: 90,
               height: 60,
               child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: ConstantOther.borderRadius,
                   child: Image.network(
                     snapshot.data![index].imageUrl,
                     fit: BoxFit.cover,

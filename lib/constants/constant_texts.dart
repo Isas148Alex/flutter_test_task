@@ -1,6 +1,6 @@
-/// Contain all constant texts for next maintenance
+/// Константные тексты. Вынесены для возможного перевода.
 
-class ConstantTexts{
+class ConstantTexts {
   static String title = "ForestVPN test";
   static String somethingWrong = "Something went wrong";
   static String featured = "Featured";

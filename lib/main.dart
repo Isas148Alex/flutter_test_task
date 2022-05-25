@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:forestvpn_test/bloc/screens/news_screen.dart';
-import 'package:forestvpn_test/constant_texts.dart';
-
-import 'bloc/news_bloc.dart';
+import 'package:forestvpn_test/screens/news_screen.dart';
+import 'constants/constant_texts.dart';
+import 'bloc/news/news_bloc.dart';
 
 void main() {
   runApp(const ForestVPNTestApp());
