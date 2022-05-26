@@ -61,6 +61,9 @@ class NewsScreen extends StatelessWidget {
                         //В макете было 300 и оно выглядит норм. Но всё таки сделал так
                         //чтобы влезало больше списка. Можно раскомментить и будет как на макете
                         //height: 300,
+                        //Можно закомментить, но тогда при повороте экрана будет
+                        //перегрузка, а я её не хотел.
+                        height: MediaQuery.of(context).size.height / 4,
                         viewportFraction: 1,
                         //Не было указано, но как по мне - логично
                         enableInfiniteScroll: false,
