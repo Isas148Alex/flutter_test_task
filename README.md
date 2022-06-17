@@ -26,3 +26,5 @@
 
 ## Ссылки
 1. [Figma](https://www.figma.com/file/Argrws6VDUE8Qvg2DwySIH/Untitled?node-id=0%3A1)
+
+<img width="887" alt="2" src="https://user-images.githubusercontent.com/63638747/174290470-ffa8eea8-6761-47ae-b96c-48d872afaf81.png">
