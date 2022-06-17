@@ -42,8 +42,7 @@ class NewsScreen extends StatelessWidget {
   }
 
   Widget _buildScaffoldBody() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return ListView(
       children: [
         Container(
             padding: ConstantStyles.containerPadding,
@@ -63,7 +62,7 @@ class NewsScreen extends StatelessWidget {
                         //height: 300,
                         //Можно закомментить, но тогда при повороте экрана будет
                         //перегрузка, а я её не хотел.
-                        height: MediaQuery.of(context).size.height / 4,
+                        height: MediaQuery.of(context).size.height * 0.33,
                         viewportFraction: 1,
                         //Не было указано, но как по мне - логично
                         enableInfiniteScroll: false,
@@ -87,13 +86,14 @@ class NewsScreen extends StatelessWidget {
           builder: (context, AsyncSnapshot<List<Article>> snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.done:
-                return Expanded(
-                    child: ListView.builder(
-                        itemCount: snapshot.data?.length,
-                        itemBuilder: (context, index) {
-                          return _listViewLatestArticlesBuilder(
-                              context, index, snapshot);
-                        }));
+                return ListView.builder(
+                    shrinkWrap: true,
+                    physics: const ClampingScrollPhysics(),
+                    itemCount: snapshot.data?.length,
+                    itemBuilder: (context, index) {
+                      return _listViewLatestArticlesBuilder(
+                          context, index, snapshot);
+                    });
               default:
             }
             return Text(ConstantTexts.somethingWrong);
